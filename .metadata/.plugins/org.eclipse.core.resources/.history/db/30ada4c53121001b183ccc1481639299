@@ -1,0 +1,44 @@
+package wta_problem;
+
+public class Target  //represents one bit in one gene.
+{
+	private int threat;
+	private int name;
+	
+	/**
+	 * @param threat
+	 * @param name
+	 */
+	public Target(int threat, int name) {
+		super();
+		this.threat = threat;
+		this.name = name;
+	}
+	/**
+	 * @return the threat
+	 */
+	public int getThreat() {
+		return threat;
+	}
+	/**
+	 * @param threat the threat to set
+	 */
+	public void setThreat(int threat) {
+		this.threat = threat;
+	}
+	/**
+	 * @return the name
+	 */
+	public int getName() {
+		return name;
+	}
+	/**
+	 * @param name the name to set
+	 */
+	public void setName(int name) {
+		this.name = name;
+	}
+	
+	
+	
+}

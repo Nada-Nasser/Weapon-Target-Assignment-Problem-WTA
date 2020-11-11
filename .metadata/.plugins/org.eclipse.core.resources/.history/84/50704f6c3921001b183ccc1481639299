@@ -1,0 +1,47 @@
+package wta_problem;
+
+public class Gene 
+{
+	private int  target; // target name
+	private int weapon; // ith name
+	
+	
+	/**
+	 * @param target [int]
+	 * @param weapon [int]
+	 */
+	public Gene(int target, int weapon) {
+		super();
+		this.target = target;
+		this.weapon = weapon;
+	}
+	
+	/**
+	 * @return the target
+	 */
+	public int getTarget() {
+		return target;
+	}
+	/**
+	 * @param target the target to set
+	 */
+	public void setTarget(int target) {
+		this.target = target;
+	}
+	/**
+	 * @return the weapon
+	 */
+	public int getWeapon() {
+		return weapon;
+	}
+	/**
+	 * @param weapon the weapon to set
+	 */
+	public void setWeapon(int weapon) {
+		this.weapon = weapon;
+	}
+	
+	
+	
+
+}

@@ -1,0 +1,114 @@
+package wta_problem;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+
+public class Chromosome 
+{
+	private ArrayList<Gene> genes;
+	private float fitnessValue;
+	
+	
+	/**
+	 * @param chromosomeGenes
+	 * @param fitnessValue
+	 */
+	public Chromosome(ArrayList<Gene> chromosomeGenes) {
+		this.genes = chromosomeGenes;
+		this.fitnessValue = calculateFitnessValue();
+	}
+	
+	private float calculateFitnessValue() 
+	{
+		// <targetName , multiplication of probabilities>. 
+		HashMap<Integer, Float> map = new HashMap<Integer, Float>();
+		
+		for(int i = 0 ; i < genes.size() ; i++)
+		{
+			Gene gene = genes.get(i);
+			//int weaponIthName = gene.getWeapon(); // TODO replace it with i.
+			int targetName = gene.getTarget();
+			
+			float survivalProb = 1- Population.successProbability(i, targetName);
+			
+			if(map.get(targetName) == null)
+			{
+				map.put(targetName, survivalProb);
+			}
+			else
+			{
+				float prob = map.get(targetName);
+				map.put(targetName, survivalProb*prob);
+			}		
+		}
+		
+		float sumFitness = 0;
+		for (Map.Entry<Integer,Float> entry : map.entrySet()) { 
+	    
+			int targetName = entry.getKey();
+			float prob = entry.getValue();
+			
+			sumFitness+= (prob * Population.getTargetThreatValue(targetName));
+		
+		}
+		
+		return sumFitness;
+	}
+	
+	
+	
+	/*
+	
+	public void changeGeneTarget(int index , Target target) // used in mutation
+	{
+		genes.get(index).setTarget(target);
+	}*/
+	
+
+	/**
+	* @return the chromosomeGenes
+	*/
+	public ArrayList<Gene> getChromosomeGenes() {
+		return genes;
+	}
+	
+	
+	/**
+	 * @param chromosomeGenes the chromosomeGenes to set
+	 */
+	public void setChromosomeGenes(ArrayList<Gene> chromosomeGenes) {
+		this.genes = chromosomeGenes;
+	}
+	
+	/**
+	* @return the fitnessValue
+	 */
+	public float getFitnessValue() {
+		return fitnessValue;
+	}
+	
+	/**
+	 * @param fitnessValue the fitnessValue to set
+	 */
+	public void setFitnessValue(float fitnessValue) {
+		this.fitnessValue = fitnessValue;
+	}
+
+	@Override
+	public String toString() 
+	{
+		String genesStr = "|";
+		
+		for(int i = 0 ; i < genes.size() ; i++)
+		{
+			genesStr+= genes.get(i).getTarget()+"|";
+		}
+		
+		return "Chromosome [genes=" + genesStr + "\n\n,"
+				+ " fitnessValue=" + fitnessValue + "]";
+	}
+	
+	
+	
+}

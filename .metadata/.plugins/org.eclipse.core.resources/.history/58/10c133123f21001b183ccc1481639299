@@ -1,0 +1,106 @@
+package wta_problem;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Random;
+
+public class Population 
+{
+	private static ArrayList<Chromosome> chromosomes; // built from user inputs
+	
+	// user inputs
+	private static HashMap<Weapon, Integer> weaponNumberMap; //<weapon , count>	
+	
+	private static int nTargets;
+	private static int nWeapon;
+	private static int nPopulation;
+	
+	
+	private static HashMap<Integer, Integer> targetThreatMap; // <target name , target threatCoff>	
+	private static ArrayList<ArrayList<Float>> probabilityMatrix; //[weapon ith name][target name]
+	
+	
+	public static void initialize() // USER INPUTS
+	{
+		weaponNumberMap = new HashMap<Weapon, Integer>();
+		weaponNumberMap.put(new Weapon("Tank", 0)    , 2); // we need the weapon ith name for prob. matrix. 
+		weaponNumberMap.put(new Weapon("Aircraft", 1), 1);
+		weaponNumberMap.put(new Weapon("Grenade", 2) , 2);
+		
+		nTargets = 3;
+		nWeapon = 3;
+		nPopulation = 10;
+		
+		targetThreatMap = new HashMap<Integer, Integer>();
+		targetThreatMap.put(0, 16);
+		targetThreatMap.put(1, 5);
+		targetThreatMap.put(2, 10);
+		
+		probabilityMatrix = new ArrayList<ArrayList<Float>>();
+		
+		ArrayList<Float> prob1 = new ArrayList<Float>();
+		prob1.add((float) 0.3);
+		prob1.add((float) 0.6);
+		prob1.add((float) 0.5);
+		
+		ArrayList<Float> prob2 = new ArrayList<Float>();
+		prob2.add((float) 0.4);
+		prob2.add((float) 0.5);
+		prob2.add((float) 0.4);
+		
+		ArrayList<Float> prob3 = new ArrayList<Float>();
+		prob3.add((float) 0.1);
+		prob3.add((float) 0.2);
+		prob3.add((float) 0.2);
+		
+		probabilityMatrix.add(prob1);
+		probabilityMatrix.add(prob2);
+		probabilityMatrix.add(prob3);
+		
+		buildChromosomes(); // randomly
+	}
+	
+	private static void buildChromosomes() {
+		
+		
+		for(int i = 0 ; i < nPopulation ; i++)
+		{
+			Random rand = new Random();
+			ArrayList<Gene> genes = new ArrayList<Gene>();
+			for(int weapon = 0 ; weapon < nWeapon ; weapon++)
+			{
+				int target = rand.nextInt(nTargets);
+				genes.add(new Gene(target , weapon));	
+			}
+			Chromosome chromosome = new Chromosome(genes);
+		}
+
+		
+		
+		System.out.println( "Fitness Value : " + chromosome.getFitnessValue());
+	}
+
+	/**
+	 * 
+	 * @param weapon ith name
+	 * @param target name
+	 * @return success Probability
+	 */
+	public static float successProbability(int weapon , int target)
+	{
+		return probabilityMatrix.get(weapon).get(target);
+	}
+	
+	/**
+	 * @param targetName
+	 * @return target's threat value
+	 */
+	public static float getTargetThreatValue(int targetName)
+	{
+		return targetThreatMap.get(targetName);
+	}
+	
+	
+	
+	
+}
