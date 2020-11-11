@@ -14,7 +14,8 @@ public class Population
 	private static int nIterations;
 	
 	final private static double Pc =  0.8; //Crossover probability
-	
+	final private static double Pm = 0.3; // mutation value
+
 	private static ArrayList<Chromosome> populationChromosomes;
 	
 	//built from user inputs	
@@ -65,7 +66,14 @@ public class Population
 	}
 	
 	private static void mutation(ArrayList<Chromosome> offspringChromosomes) {
-		
+		for(Chromosome x : offspringChromosomes) {
+			Random r = new Random();
+			double MutProb = r.nextDouble();
+			if (MutProb <= Pm){
+				System.out.println(MutProb);
+				System.out.println("mutate");
+			}
+		}
 	}
 
 	private static ArrayList<Chromosome> crossOver(ArrayList<Chromosome> selectedParents) {
