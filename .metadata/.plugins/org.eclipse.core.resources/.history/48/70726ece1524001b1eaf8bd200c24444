@@ -1,8 +1,0 @@
-package wta_problem;
-/*
-public class Target  //represents one bit in one gene.
-{
-	private float threat;
-	private int name;
-}
-*/
