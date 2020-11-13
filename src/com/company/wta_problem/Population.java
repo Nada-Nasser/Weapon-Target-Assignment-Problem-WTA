@@ -13,8 +13,8 @@ public class Population
 	private static int nParents;
 	private static int nIterations;
 	
-	final private static double Pc =  0.8; //Crossover probability
-	final private static double Pm = 0.3; // mutation value
+	final private static double Pc =  0.7; //Crossover probability
+	final private static double Pm = 0.1; // mutation value
 
 	private static ArrayList<Chromosome> populationChromosomes;
 	
@@ -36,13 +36,13 @@ public class Population
 	
 	public static void initialize() // USER INPUTS
 	{
-		nIterations = 10;
+		nIterations = 1000;
 		nPopulation = 10;
-		nParents = 4;
+		nParents = 10;
 		
 		Scanner in = new Scanner(System.in);
 				
-		readInputs(); // TODO
+		readInputs();
 		buildChromosomes(); // initialize population randomly , evaluate fitness
 		
 		int i = 0;
@@ -54,25 +54,59 @@ public class Population
 			ArrayList<Chromosome> offspringChromosomes = crossOver(selectedParents);
 			
 			//in.nextInt();
-			mutation(offspringChromosomes); // TODO
-			Replacement(offspringChromosomes); // TODO
+			mutation(offspringChromosomes);
+			Replacement(offspringChromosomes);
 			
 		} while (i <= nIterations);
-		
+		finalOutput();
 	}
 
+	private static void finalOutput(){
+		System.out.println("The final WTA solution is:");
+		Chromosome best = populationChromosomes.get(0);
+		for(Chromosome x : populationChromosomes){
+			if(x.getFitnessValue() > best.getFitnessValue()){
+				best = x;
+			}
+		}
+		System.out.println("fitness : " + best.getFitnessValue());
+		ArrayList<Gene> bestGenes = best.getChromosomeGenes();
+		int geneIndex=0;
+		for(Gene x: bestGenes){
+			System.out.println(indexNameWeaponMap.get(geneIndex)
+			+ " is assigned to target : " + (x.getTarget()+1));
+			geneIndex++;
+		}
+		System.out.println();
+	}
+
+	private double totalThreat(Chromosome bestChromosome){
+		double totalThreat = 0.0;
+		ArrayList<Gene> Genes = bestChromosome.getChromosomeGenes();
+		for(Gene c : Genes){
+
+		}
+		return totalThreat;
+	}
 	private static void Replacement(ArrayList<Chromosome> offspringChromosomes) {
-		
+		populationChromosomes.clear();
+		populationChromosomes.addAll(offspringChromosomes);
+		offspringChromosomes.clear();
 	}
 	
 	private static void mutation(ArrayList<Chromosome> offspringChromosomes) {
 		for(Chromosome x : offspringChromosomes) {
-			Random r = new Random();
-			double MutProb = r.nextDouble();
-			if (MutProb <= Pm){
-				System.out.println(MutProb);
-				System.out.println("mutate");
+			ArrayList<Gene> ChromosomeGenes = x.getChromosomeGenes();
+			for(Gene y: ChromosomeGenes) {
+				Random r = new Random();
+				double MutProb = r.nextDouble();
+				if (MutProb <= Pm) {
+					Random rand = new Random();
+					int target = rand.nextInt(nTargets);
+					y.setTarget(target);
+				}
 			}
+			x.setFitnessValue(x.calculateFitnessValue());
 		}
 	}
 
@@ -138,51 +172,93 @@ public class Population
 		indexNameWeaponMap = new HashMap<Integer , String>();
 		nameCountWeaponMap = new HashMap<String, Integer>();
 		weaponIntNamesMap = new HashMap<String, Integer>();
-		
-		indexNameWeaponMap.put(0, "Tank");
-		indexNameWeaponMap.put(1, "Tank");
-		indexNameWeaponMap.put(2, "aircraft");
-		indexNameWeaponMap.put(3, "grenade");
-		indexNameWeaponMap.put(4, "grenade");
-		
-		nameCountWeaponMap.put("Tank", 2);
-		nameCountWeaponMap.put("aircraft", 1);
-		nameCountWeaponMap.put("grenade", 2);
-		
-		weaponIntNamesMap.put("Tank" , 0);
-		weaponIntNamesMap.put("aircraft" , 1);
-		weaponIntNamesMap.put("grenade" , 2);
-		
-		nTargets = 3;
-		nWeapon = 5;
-		
+
+		Scanner in = new Scanner(System.in);
+		System.out.println("Enter the weapon types and the number of instances of each type: (Enter\n" +
+				"“x” when you’re done)");
+		String weaponname;
+		int count;
+		int index =0;
+		int place=0;
+		weaponname = in.next();
+		while(!weaponname.equals("x")){
+			count = in.nextInt();
+			for(int i=0; i<count; i++){
+				indexNameWeaponMap.put(index, weaponname);
+				index++;
+			}
+			nameCountWeaponMap.put(weaponname, count);
+			weaponIntNamesMap.put(weaponname,place);
+			weaponname = in.next();
+			place++;
+		}
+		nWeapon = indexNameWeaponMap.size();
+
+		System.out.println("Enter the number of targets:");
+		nTargets = in.nextInt();
+
 		targetThreatMap = new HashMap<Integer, Integer>();
-		targetThreatMap.put(0, 16);
-		targetThreatMap.put(1, 5);
-		targetThreatMap.put(2, 10);
-		
+
+		System.out.println("Enter the threat coefficient of each target:");
+		for(int i=0; i<nTargets; i++){
+			targetThreatMap.put(i, in.nextInt());
+		}
+
 		probabilityMatrix = new ArrayList<ArrayList<Double>>();
+		ArrayList<Double> prob = new ArrayList<Double>();
+		System.out.println("Enter the weapons’ success probabilities matrix:");
+		for(int i=0; i<nameCountWeaponMap.size(); i++){
+			for(int y=0; y<nTargets; y++){
+				prob.add(in.nextDouble());
+			}
+			probabilityMatrix.add(prob);
+		}
+		System.out.println("Please wait while running the GA…");
+
+
+//		indexNameWeaponMap.put(0, "Tank");
+//		indexNameWeaponMap.put(1, "Tank");
+//		indexNameWeaponMap.put(2, "aircraft");
+//		indexNameWeaponMap.put(3, "grenade");
+//		indexNameWeaponMap.put(4, "grenade");
+//
+//		nameCountWeaponMap.put("Tank", 2);
+//		nameCountWeaponMap.put("aircraft", 1);
+//		nameCountWeaponMap.put("grenade", 2);
+//		weaponIntNamesMap.put("Tank" , 0);
+//		weaponIntNamesMap.put("aircraft" , 1);
+//		weaponIntNamesMap.put("grenade" , 2);
+//
+//		nTargets = 3;
+//		nWeapon = 5;
 		
-		ArrayList<Double> prob1 = new ArrayList<Double>();
-		prob1.add(0.3);
-		prob1.add( 0.6);
-		prob1.add( 0.5);
+//		targetThreatMap = new HashMap<Integer, Integer>();
+//		targetThreatMap.put(0, 16);
+//		targetThreatMap.put(1, 5);
+//		targetThreatMap.put(2, 10);
 		
-		ArrayList<Double> prob2 = new ArrayList<Double>();
-		prob2.add(0.4);
-		prob2.add(0.5);
-		prob2.add(0.4);
+//		probabilityMatrix = new ArrayList<ArrayList<Double>>();
 		
-		ArrayList<Double> prob3 = new ArrayList<Double>();
-		prob3.add(0.1);
-		prob3.add(0.2);
-		prob3.add(0.2);
-		
-		probabilityMatrix.add(prob1);
-		probabilityMatrix.add(prob2);
-		probabilityMatrix.add(prob3);
-		
-		System.out.println("Please wait while running the GA�");
+//		ArrayList<Double> prob1 = new ArrayList<Double>();
+//		prob1.add(0.3);
+//		prob1.add( 0.6);
+//		prob1.add( 0.5);
+//
+//		ArrayList<Double> prob2 = new ArrayList<Double>();
+//		prob2.add(0.4);
+//		prob2.add(0.5);
+//		prob2.add(0.4);
+//
+//		ArrayList<Double> prob3 = new ArrayList<Double>();
+//		prob3.add(0.1);
+//		prob3.add(0.2);
+//		prob3.add(0.2);
+//
+//		probabilityMatrix.add(prob1);
+//		probabilityMatrix.add(prob2);
+//		probabilityMatrix.add(prob3);
+//
+//		System.out.println("Please wait while running the GA�");
 	}
 	
 	
@@ -203,7 +279,7 @@ public class Population
 			}
 			
 			Chromosome chromosome = new Chromosome(genes); // in the constructor, the fitness value evaluated also
-			System.out.println(chromosome.toString()); // TODO: Delete this line
+			//System.out.println(chromosome.toString()); // TODO: Delete this line
 			populationChromosomes.add(chromosome);
 		}	
 		

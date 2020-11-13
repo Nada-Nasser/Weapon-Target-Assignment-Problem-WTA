@@ -17,7 +17,7 @@ public class Chromosome
 		this.fitnessValue = calculateFitnessValue();
 	}
 	
-	private double calculateFitnessValue() 
+	public double calculateFitnessValue()
 	{
 		// <targetName , multiplication of probabilities>. 
 		HashMap<Integer, Double> map = new HashMap<Integer, Double>();
@@ -54,31 +54,22 @@ public class Chromosome
 	}
 	
 
-	/**
-	* @return the chromosomeGenes
-	*/
 	public ArrayList<Gene> getChromosomeGenes() {
 		return genes;
 	}
 	
 	
-	/**
-	 * @param chromosomeGenes the chromosomeGenes to set
-	 */
+
 	public void setChromosomeGenes(ArrayList<Gene> chromosomeGenes) {
 		this.genes = chromosomeGenes;
 	}
 	
-	/**
-	* @return the fitnessValue
-	 */
+
 	public double getFitnessValue() {
 		return fitnessValue;
 	}
 	
-	/**
-	 * @param fitnessValue the fitnessValue to set
-	 */
+
 	public void setFitnessValue(double fitnessValue) {
 		this.fitnessValue = fitnessValue;
 	}
