@@ -6,7 +6,7 @@ import java.util.Map;
 public class Chromosome 
 {
 	private ArrayList<Gene> genes;
-	private double fitnessValue;
+	private float fitnessValue;
 	
 	
 	/**
@@ -17,17 +17,17 @@ public class Chromosome
 		this.fitnessValue = calculateFitnessValue();
 	}
 	
-	public double calculateFitnessValue()
+	public float calculateFitnessValue()
 	{
 		// <targetName , multiplication of probabilities>. 
-		HashMap<Integer, Double> map = new HashMap<Integer, Double>();
+		HashMap<Integer, Float> map = new HashMap<Integer, Float>();
 		
 		for(int weaponIndex = 0 ; weaponIndex < genes.size() ; weaponIndex++)
 		{
 			Gene gene = genes.get(weaponIndex);
 			int targetName = gene.getTarget();
 			
-			double survivalProb = 1- Population.successProbability(weaponIndex, targetName);
+			float survivalProb = 1f - Population.successProbability(weaponIndex, targetName);
 			
 			if(map.get(targetName) == null)
 			{
@@ -35,19 +35,28 @@ public class Chromosome
 			}
 			else
 			{
-				double prob = map.get(targetName);
+				float prob = map.get(targetName);
 				map.put(targetName, survivalProb*prob);
-			}		
+			}
 		}
-		
-		double sumFitness = 0;
-		for (Map.Entry<Integer,Double> entry : map.entrySet()) { 
+
+		float sumFitness = 0f;
+		for (Map.Entry<Integer,Float> entry : map.entrySet()) {
 	    
 			int targetName = entry.getKey();
-			double prob = entry.getValue();
+			float prob = entry.getValue();
 			
 			sumFitness+= (prob * Population.getTargetThreatValue(targetName));
 		
+		}
+
+		for (Map.Entry<Integer, Integer>entry : Population.targetThreatMap.entrySet()){
+			int targetName = entry.getKey();
+			if(!map.containsKey(targetName)) // when there is no weapon assigned to this target
+			{
+				float threat = 1.0f * entry.getValue();
+				sumFitness+=threat;
+			}
 		}
 		
 		return sumFitness;
@@ -65,12 +74,12 @@ public class Chromosome
 	}
 	
 
-	public double getFitnessValue() {
+	public float getFitnessValue() {
 		return fitnessValue;
 	}
 	
 
-	public void setFitnessValue(double fitnessValue) {
+	public void setFitnessValue(float fitnessValue) {
 		this.fitnessValue = fitnessValue;
 	}
 
@@ -82,7 +91,7 @@ public class Chromosome
 		
 		for(int i = 0 ; i < genes.size() ; i++)
 		{
-			genesStr+= genes.get(i).getTarget()+"|";
+			genesStr+= (genes.get(i).getTarget()+1)+"|";
 		}
 		
 		return "Chromosome: genes=" + genesStr + "]\n"
